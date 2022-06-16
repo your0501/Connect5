@@ -111,9 +111,14 @@ function click(e) {
     if (i < 0 || i > 14 || j < 0 || j > 14) return;
     if (map[j][i] !== 0) return;
     const color = turn % 2;
-    drop(i, j, color);
-    findOpenSam();
-    check_win();
+    if (samsamRestrict(i, j)) { 
+        console.log("삼삼")
+    } else {
+        drop(i, j, color);
+        check_win();
+    }
+
+
 }
 
 document.getElementById('button').addEventListener('click', step);
@@ -175,9 +180,11 @@ function findOpenSam(color) {
 function samsamRestrict(x, y) {
     const currSamCount = findOpenSam();
     if (currSamCount > 0) return false;
-    map[x, y] = 1;
+    map[x][y] = 1;
     const nextSamCount = findOpenSam();
-    map[x, y] = 0;
-    if (nextSamCount > currSamCount + 1) return true;
+    map[x][y] = 0;
+    if (nextSamCount > currSamCount + 1) {
+        return true
+    };
     return false;
 }
