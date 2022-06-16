@@ -112,6 +112,7 @@ function click(e) {
     if (map[j][i] !== 0) return;
     const color = turn % 2;
     drop(i, j, color);
+    findOpenSam();
     check_win();
 }
 
@@ -123,7 +124,7 @@ document.getElementById('myCanvas').addEventListener('click', click);
 function connect5() {
     for (let i = 0; i < 15; i++) {
         for (let j = 0; j < 15; j++) {
-            if (map[i]?.[j] === 0) continue;
+            if (!map[i]?.[j]) continue;
             if (map[i]?.[j] === map[i]?.[j + 1] && map[i]?.[j] === map[i]?.[j + 2] && map[i]?.[j] === map[i]?.[j + 3] && map[i]?.[j] === map[i]?.[j + 4]) {
                 return map[i]?.[j];
             }
@@ -139,4 +140,44 @@ function connect5() {
         }
     }
     return 0;
+}
+
+// map에서 열린삼을 확인한다.
+const openSamList = ["01110", "011010", "010110"];
+function findOpenSam(color) {
+    let samCount = 0;
+    for (let i = 0; i < 15; i++) {
+        for (let j = 0; j < 15; j++) {
+
+            for (let sam of openSamList) { // 패턴으로 열린삼 찾기
+                let pattern = sam.split("").map(a => parseInt(a));
+
+                for (let dir of [[1, 0], [0, 1], [1, 1], [-1, 1]]) {
+                    let valid = pattern.reduce((prevReturn, currValue, index) => {
+                        if (currValue == map[i + index * dir[0]]?.[j + index * dir[1]] && prevReturn) {
+                            return true;
+                        }
+                        return false;
+                    }, true);
+                    if (valid) {
+                        samCount += 1;
+                    };
+                }
+
+            }
+            
+        }
+    }
+    console.log("흑의 열린 3 갯수: ", samCount)
+    return samCount;
+}
+
+function samsamRestrict(x, y) {
+    const currSamCount = findOpenSam();
+    if (currSamCount > 0) return false;
+    map[x, y] = 1;
+    const nextSamCount = findOpenSam();
+    map[x, y] = 0;
+    if (nextSamCount > currSamCount + 1) return true;
+    return false;
 }
