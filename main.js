@@ -1,4 +1,20 @@
 
+const App = new PIXI.Application()
+document.body.appendChild(App.view)
+
+class RenjuBoard extends PIXI.Sprite {
+    constructor() {
+        let texture = PIXI.Texture.from("renjuBoard.png");
+        super(texture);
+
+    }
+    initalize() {
+        
+    }
+}
+
+const renjuBoard = new RenjuBoard();
+App.stage.addChild(renjuBoard)
 
 const canvas = document.getElementById('myCanvas');
 const ctx = canvas.getContext('2d');
@@ -121,7 +137,7 @@ function click(e) {
 
 }
 
-document.getElementById('button').addEventListener('click', step);
+//document.getElementById('button').addEventListener('click', step);
 document.getElementById('myCanvas').addEventListener('click', click);
 
 
