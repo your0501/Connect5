@@ -6,15 +6,46 @@ class RenjuBoard extends PIXI.Sprite {
     constructor() {
         let texture = PIXI.Texture.from("renjuBoard.png");
         super(texture);
-
+        this.initalize();
     }
     initalize() {
-        
+        this.map = new Array(15).fill(0).map(a => new Uint8Array(15)); // 15x15 사이즈 배열
+
+    }
+}
+
+class RenjuPiece extends PIXI.Sprite {
+    pieceTextures = [PIXI.Texture.from("renjuBlack.png"), PIXI.Texture.from("renjuWhite.png")]
+    constructor(color, x, y) {
+        super();
+        this.initalize(color, x, y);
+    }
+    initalize(color, x, y) {
+        this.texture = this.pieceTextures?.[color] ?? this.pieceTextures[0];
+        this.x = x * 32;
+        this.y = y * 32;
+    }
+    s() {
+        this.rotation += Math.random() / 10;
+        this.x += Math.random();
+        this.y += Math.random();
+        this.x -= Math.random();
+        this.y -= Math.random();
+
     }
 }
 
 const renjuBoard = new RenjuBoard();
 App.stage.addChild(renjuBoard)
+
+let t = new PIXI.Ticker();
+const ls = []
+for (let i = 0; i < 2250; i++) { // 테스트용 코드
+    let s = new RenjuPiece(Math.floor(Math.random() * 120) % 2, i % 15, ((i - i % 15) / 15) % 225);
+    App.stage.addChild(s)
+    t.add(s.s.bind(s))
+}
+t.start()
 
 const canvas = document.getElementById('myCanvas');
 const ctx = canvas.getContext('2d');
@@ -35,7 +66,7 @@ ctx.arc(canvas.width / 2 + 1, canvas.height / 2 + 1, 4, 0, 2 * Math.PI);
 ctx.fill();
 ctx.closePath();
 
-
+ 
 const map = new Array(15).fill(0).map(() => new Array(15).fill(0));
 
 
