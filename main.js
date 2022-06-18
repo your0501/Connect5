@@ -4,7 +4,7 @@ document.body.appendChild(App.view)
 
 class RenjuBoard extends PIXI.Sprite {
     constructor() {
-        let texture = PIXI.Texture.from("renjuBoard.png");
+        let texture = PIXI.Texture.from("./assets/renjuBoard.png");
         super(texture);
         this.initalize();
     }
@@ -15,7 +15,7 @@ class RenjuBoard extends PIXI.Sprite {
 }
 
 class RenjuPiece extends PIXI.Sprite {
-    pieceTextures = [PIXI.Texture.from("renjuBlack.png"), PIXI.Texture.from("renjuWhite.png")]
+    pieceTextures = [PIXI.Texture.from("./assets/renjuBlack.png"), PIXI.Texture.from("./assets/renjuWhite.png")]
     constructor(color, x, y) {
         super();
         this.initalize(color, x, y);
@@ -26,7 +26,7 @@ class RenjuPiece extends PIXI.Sprite {
         this.y = y * 32;
     }
     s() {
-        this.rotation += Math.random() / 10;
+        this.rotation += Math.random() / 2;
         this.x += Math.random();
         this.y += Math.random();
         this.x -= Math.random();
@@ -35,37 +35,40 @@ class RenjuPiece extends PIXI.Sprite {
     }
 }
 
+class RenjuPlayer {
+    constructor(name, color) {
+        this.name = name;
+        this.color = color;
+    }
+}
+
+class Input {
+    constructor() {
+        this.x = 0;
+        this.y = 0;
+        this.cursor = new PIXI.Sprite.from("./assets/cursor.png");
+        App.stage.addChild(this.cursor);
+    }
+
+    _mouse_move = (e) => {
+        let x = Math.max(Math.min(Math.floor(e.offsetX / 32), 14), 0);
+        let y = Math.max(Math.min(Math.floor(e.offsetY / 32), 14), 0);
+        this.cursor.x = x * 32;
+        this.cursor.y = y * 32;
+    }
+
+}
+
+class RenjuManager {
+    constructor() {
+        this.turn = 'black'
+    }
+}
+
 const renjuBoard = new RenjuBoard();
 App.stage.addChild(renjuBoard)
-
-let t = new PIXI.Ticker();
-const ls = []
-for (let i = 0; i < 2250; i++) { // 테스트용 코드
-    let s = new RenjuPiece(Math.floor(Math.random() * 120) % 2, i % 15, ((i - i % 15) / 15) % 225);
-    App.stage.addChild(s)
-    t.add(s.s.bind(s))
-}
-t.start()
-
-const canvas = document.getElementById('myCanvas');
-const ctx = canvas.getContext('2d');
-
-ctx.fillStyle = '#DCB35C';
-ctx.fillRect(0, 0, canvas.width, canvas.height);
-ctx.fillStyle = '#000';
-
-for (let i = 0; i < 15; i++) {
-    ctx.fillRect(32 * i + 16, 16, 2, canvas.height - 32 + 2);
-}
-for (let i = 0; i < 15; i++) {
-    ctx.fillRect(16, 32 * i + 16, canvas.width - 32 + 2, 2);
-}
-
-ctx.fillStyle = '#000';
-ctx.arc(canvas.width / 2 + 1, canvas.height / 2 + 1, 4, 0, 2 * Math.PI);
-ctx.fill();
-ctx.closePath();
-
+const input = new Input();
+document.addEventListener('mousemove', input._mouse_move)
  
 const map = new Array(15).fill(0).map(() => new Array(15).fill(0));
 
@@ -167,9 +170,6 @@ function click(e) {
 
 
 }
-
-//document.getElementById('button').addEventListener('click', step);
-document.getElementById('myCanvas').addEventListener('click', click);
 
 
 // map 배열에서 같은 숫자가 가로, 세로, 대각선으로 5개 나열되어있는지 확인하는 함수
